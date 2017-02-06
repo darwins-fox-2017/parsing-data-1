@@ -21,31 +21,35 @@ class PersonParser {
   }
 
   parseCsv(){
-    if(!this._people){
-      let data = fs.readFileSync(this._file, "utf-8").split('\n').slice(1)
-      this._people = []
-      for(let i=0; i<data.length; i++){
-        let dataPerLine = data[i].split(",")
-        let dataTemp = {
-          'id' : dataPerLine[0],
-          'first_name' : dataPerLine[1],
-          'last_name' : dataPerLine[2],
-          'email' : dataPerLine[3],
-          'phone' : dataPerLine[4],
-          'created_at' : dataPerLine[5]
-        }
-        this._people.push(new Person(dataTemp))
+    let data = fs.readFileSync(this._file, "utf-8").split('\n').slice(1)
+    this._people = []
+    for(let i=0; i<data.length; i++){
+      let dataPerLine = data[i].split(",")
+      let dataTemp = {
+        'id' : dataPerLine[0],
+        'first_name' : dataPerLine[1],
+        'last_name' : dataPerLine[2],
+        'email' : dataPerLine[3],
+        'phone' : dataPerLine[4],
+        'created_at' : dataPerLine[5]
       }
-    }else{
-      console.log("Data already exists");
+      this._people.push(new Person(dataTemp))
     }
-
     return this._people
   }
 
   get people() {
-    if (this._people)
+    if(this._people){
+      this.parseCsv()
+      for(let i=0; i<this._people.length; i++){
+        this._people[i].created_at = new Date(this._people[i].created_at).toUTCString()
+      }
       return this._people
+    }else{
+      console.log("Data does not exists");
+    }
+
+
   }
 
   addPerson(data) {
@@ -83,3 +87,5 @@ let person = {
 parser.parseCsv()
 parser.addPerson(person)
 parser.save()
+
+console.log(parser.people);
