@@ -3,6 +3,14 @@
 class Person {
   // Look at the above CSV file
   // What attributes should a Person object have?
+  constructor(component){
+    this.id = component['id'];
+    this.first_name = component['first_name'];
+    this.last_name = component['last_name'];
+    this.email = component['email'];
+    this.phone  = component['phone'];
+    this.created_at = component['created_at'];
+  }
 }
 
 class PersonParser {
@@ -12,21 +20,72 @@ class PersonParser {
     this._people = null
   }
 
-  get people() {
-    // If we've already parsed the CSV file, don't parse it again
-    // Remember: people is null by default
-    if (this._people)
-      return this._people
-
-    // We've never called people before, now parse the CSV file
-    // and return an Array of Person objects here
-    // Save the Array in the people instance variable.
+  parseCsv(){
+    let data = fs.readFileSync(this._file, "utf-8").split('\n').slice(1)
+    this._people = []
+    for(let i=0; i<data.length; i++){
+      let dataPerLine = data[i].split(",")
+      let dataTemp = {
+        'id' : dataPerLine[0],
+        'first_name' : dataPerLine[1],
+        'last_name' : dataPerLine[2],
+        'email' : dataPerLine[3],
+        'phone' : dataPerLine[4],
+        'created_at' : dataPerLine[5]
+      }
+      this._people.push(new Person(dataTemp))
+    }
+    return this._people
   }
 
-  addPerson() {}
+  get people() {
+    if(this._people){
+      this.parseCsv()
+      for(let i=0; i<this._people.length; i++){
+        this._people[i].created_at = new Date(this._people[i].created_at).toUTCString()
+      }
+      return this._people
+    }else{
+      console.log("Data does not exists");
+    }
+
+
+  }
+
+  addPerson(data) {
+    data['id'] = this._people.length + 1
+    this._people.push(new Person(data))
+  }
+
+  save(){
+    let tempData = this._people
+
+    for (var i = 0; i < tempData.length; i++) {
+      tempData[i].created_at = new Date(`${tempData[i].created_at}`).toISOString()
+      this._people[i] = `${tempData[i].id},${tempData[i].first_name},${tempData[i].last_name},${tempData[i].email},${tempData[i].phone},${tempData[i].created_at}`
+
+    }
+    this._people.unshift('id,first_name,last_name,email,phone,created_at')
+    this._people = this._people.join('\n')
+    fs.writeFileSync('people.csv', this._people)
+    console.log("Data has been saved");
+  }
 
 }
 
+let fs = require('fs')
 let parser = new PersonParser('people.csv')
+let person = {
+  'id' : 201,
+  'first_name' : 'John',
+  'last_name' : 'Doe',
+  'email' : 'john@doe.com',
+  'phone' : '1-615-814-8763',
+  'created_at' : new Date()
+}
 
-console.log(`There are ${parser.people.size} people in the file '${parser.file}'.`)
+parser.parseCsv()
+parser.addPerson(person)
+parser.save()
+
+console.log(parser.people);
