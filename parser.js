@@ -20,7 +20,7 @@ class PersonParser {
     this._people = null
   }
 
-  readFile(){
+  parseCsv(){
     if(!this._people){
       let data = fs.readFileSync(this._file, "utf-8").split('\n').slice(1)
       this._people = []
@@ -57,7 +57,7 @@ class PersonParser {
     let tempData = this._people
 
     for (var i = 0; i < tempData.length; i++) {
-      tempData[i].created_at = new Date(`${tempData[i].created_at}`).toUTCString()
+      tempData[i].created_at = new Date(`${tempData[i].created_at}`).toISOString()
       this._people[i] = `${tempData[i].id},${tempData[i].first_name},${tempData[i].last_name},${tempData[i].email},${tempData[i].phone},${tempData[i].created_at}`
 
     }
@@ -77,11 +77,9 @@ let person = {
   'last_name' : 'Doe',
   'email' : 'john@doe.com',
   'phone' : '1-615-814-8763',
-  'created_at' : new Date()//'2009-08-10T03:53:40-07:00'
+  'created_at' : new Date()
 }
 
-parser.readFile()
-console.log(`There are ${parser._people.length} people in the file '${parser._file}'.`)
-
+parser.parseCsv()
 parser.addPerson(person)
 parser.save()
