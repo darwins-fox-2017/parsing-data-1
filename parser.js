@@ -38,8 +38,12 @@ class PersonParser {
         phone: parsed.data[i][4],
         createdAt: parsed.data[i][5]
       }
-      this._people.push(new Person(person))
+      if (!parsed.data[i][0] == '') {
+        this._people.push(new Person(person))
+      }
     }
+    // console.log(this._people);
+    // console.log(this._people.length -1 );
     return this._people
   }
 
@@ -86,7 +90,6 @@ class PersonParser {
       peoples[i][5] = moment(peoples[i][5]).format('D MMM YYYY');
 
     }
-    console.log(peoples);
     return peoples
   }
 
@@ -98,14 +101,13 @@ let person = {
   id: 201,
   firstName: 'Diky',
   lastName:  'Arga',
-  email: 'hello@dikyarga.co',
+  email: 'hello@dikyarga.com',
   phone: '085173263173',
   createdAt: new Date().toISOString()
 }
 parser.addPerson(person)
 parser.save()
-// console.log(parser.people);
-parser.people
+console.log(parser.people);
 
 // console.log(`There are ${parser.people.size} people in the file '${parser.file}'.`)
 
