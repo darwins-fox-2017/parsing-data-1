@@ -50,6 +50,8 @@ class PersonParser {
       this._people[i] = `${this._people[i].id},${this._people[i].firstName},${this._people[i].lastName},${this._people[i].email},${this._people[i].phone},${this._people[i].createdAt}`
     }
     this._people.unshift(`id,first_name,last_name,email,phone,created_at`)
+    console.log(`There are ${this._people.length} people in the file '${parser._file}'.`)
+
     this._people = this._people.join('\n')
     fs.writeFile(this._file, this._people , 'utf-8', function (err) {
     if (err) return console.log(err);
@@ -69,4 +71,3 @@ console.log(parser.people);
 parser.addPerson('irwin','pratajaya','7ofpentacles@gmail.com',081310338777)
 //parser.last()
 parser.save()
-console.log(`There are ${parser.people.length} people in the file '${parser._file}'.`)
