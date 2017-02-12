@@ -36,7 +36,7 @@ class PersonParser {
   save() {
     let people = []
     this._people.map((person) => {
-      people.push(`${person.id},${person.first_name},${person.last_name},${person.email},${person.phone},${person.created_at}`)
+      people.push(`${person.id},${person.first_name},${person.last_name},${person.email},${person.phone},${new Date(person.created_at).toISOString()}`)
     })
     
     people.unshift(`id,first_name,last_name,email,phone,created_at`)
@@ -50,7 +50,7 @@ class PersonParser {
   readPeople() {
     this._people = []
     this.readData((row, col) => {
-      this._people.push(new Person(col(1), col(2), col(3), col(4), col(5), col(6)))
+      this._people.push(new Person(col(1), col(2), col(3), col(4), col(5), new Date(col(6)).toUTCString()))
     })
   }
 
