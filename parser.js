@@ -36,7 +36,7 @@ class PersonParser {
 
   addPerson(first_name,last_name,email,phone,created_at) {
     //var data = fs.readFileSync(this._file,'utf-8')
-    this._people.push( new Person(this._people.length,first_name,last_name,email,phone) )
+    this._people.push( new Person(this._people.length+1,first_name,last_name,email,phone) )
   }
 
   last() {
@@ -49,11 +49,11 @@ class PersonParser {
     for(let i = 0; i < this._people.length; i++) {
       this._people[i] = `${this._people[i].id},${this._people[i].firstName},${this._people[i].lastName},${this._people[i].email},${this._people[i].phone},${this._people[i].createdAt}`
     }
-    this._people.unshift(`id,first_name,last_name,email,phone,created_at`)
-    console.log(`There are ${this._people.length} people in the file '${parser._file}'.`)
-
-    this._people = this._people.join('\n')
-    fs.writeFile(this._file, this._people , 'utf-8', function (err) {
+    // this._people.unshift(`id,first_name,last_name,email,phone,created_at`)
+    // console.log(`There are ${this._people.length} people in the file '${parser._file}'.`)
+    let csv = "id,first_name,last_name,email,phone,created_at\n"
+    csv += this._people.join('\n')
+    fs.writeFile(this._file, csv , 'utf-8', function (err) {
     if (err) return console.log(err);
       console.log('oke sudah disimpan');
     });
