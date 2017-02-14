@@ -20,7 +20,7 @@ class PersonParser {
   }
 
   parseFile(){
-    let data = fs.readFileSync(this._file, "utf-8").split('\n').slice(1)
+    let data = fs.readFileSync(this._file, "utf-8").trim().split('\n').slice(1)
     this._people = []
     for(let i=0; i<data.length; i++){
       let columnRow = data[i].split(",")
@@ -34,7 +34,6 @@ class PersonParser {
       }
       this._people.push(new Person(temp))
     }
-
     return this._people
   }
 
@@ -51,20 +50,19 @@ class PersonParser {
   }
 
   addPerson(data) {
-    data['id'] = this._people.length
+    data.id = this._people.length+1
     this._people.push(new Person(data))
-    console.log(data)
   }
 
   save(){
     let temp = this._people
     for (var i = 0; i < temp.length; i++) {
-      temp[i].created_at = new Date(`${temp[i].created_at}`).toISOString()
+      temp[i].created_at = new Date(`${temp[i].created_at}`)
       this._people[i] = `${temp[i].id},${temp[i].first_name},${temp[i].last_name},${temp[i].email},${temp[i].phone},${temp[i].created_at}`
     }
     this._people.unshift('id,first_name,last_name,email,phone,created_at')
     this._people = this._people.join('\n')
-    console.log(this._people);
+
     fs.writeFileSync('people.csv', this._people)
     console.log("Data has been saved");
   }
@@ -73,7 +71,7 @@ class PersonParser {
 let fs = require('fs')
 let parser = new PersonParser('people.csv')
 let person = {
-  'id' : 201,
+  'id' : 0,
   'first_name' : 'Joko',
   'last_name' : 'Priyono',
   'email' : 'jokopriyono@gmail.com',
@@ -82,6 +80,5 @@ let person = {
 }
 
 parser.parseFile()
-// console.log(parser.people[200])
 parser.addPerson(person)
 parser.save()
