@@ -41,7 +41,7 @@ class PersonParser {
     if (this._people){
       return this._people
     }
-
+    console.log('executed');
     let data = fs.readFileSync(this._file, 'utf-8').split('\n')
     this._people = []
     for (let i = 1; i < data.length; i++) {
@@ -64,17 +64,17 @@ class PersonParser {
     for (let i = 0; i < this._people.length; i++) {
       this._people[i] = `${this._people[i].id},${this._people[i].first_name},${this._people[i].last_name},${this._people[i].email},${this._people[i].phone},${this._people[i].created_at}`
     }
-    this._people.unshift()
+    // this._people.unshift()
+    let dataCSV = "id,first_name,last_name,email,phone,created_at\n"
+    dataCSV += this._people.join('\n')
 
-    this._people = this._people.join('\n')
-
-    fs.writeFile(this._file,this._people,'utf-8', function(err) {
-      err ? console.log(err) : console.log('data saved');
-      // if(err) {
-      //   console.log(err);
-      // } else {
-      //   console.log('data saved');
-      // }
+    fs.writeFile(this._file,dataCSV,'utf-8', function(err) {
+      // err ? console.log(err) : console.log('data saved');
+      if(err) {
+        console.log(err);
+      } else {
+        console.log('data saved');
+      }
     })
   }
 
@@ -83,8 +83,8 @@ class PersonParser {
 let parser = new PersonParser('people.csv')
 
 parser.people
-// parser.addPerson('Endy', 'Susanto', 'endy@email.com', 08123456789)
-// parser.addPerson('Wahyu', 'Hidayat', 'wahyu@email.com', 08111222333)
+parser.addPerson('Endy', 'Susanto', 'endy@email.com', 08123456789)
+parser.addPerson('Wahyu', 'Hidayat', 'wahyu@email.com', 08111222333)
 parser.addPerson('Irsan', 'Sebastian', 'irsan@email.com', 08123321123)
 // console.log(`There are ${parser.people.size} people in the file '${parser.file}'.`)
 parser.save()
