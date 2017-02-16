@@ -1,58 +1,67 @@
 "use strict"
-const fs = require('fs')
+const fs = require('fs');
 
 class Person {
-  constructor(id,first_name,last_name,email,phone){
-    this.id         = id
-    this.first_name = first_name
-    this.last_name  = last_name
-    this.email      = email
-    this.phone      = phone
-    this.created_at = new Date()
+  constructor(id,first_name,last_name,email,phone) {
+    this.id = id
+    this.firstName = first_name
+    this.lastName = last_name
+    this.email = email
+    this.phone = phone
+    this.createdAt = new Date()
   }
 }
 
-class PersonParser {
+class Parser {
+
   constructor(file) {
-    this._file   = file
+    this._file = file
     this._people = null
   }
 
   get people() {
-    if (this._people)
+    if (this._people) {
       return this._people
+    }
 
-    let readFile = fs.readFileSync(this._file,"utf-8").split('\n')
+    var data = fs.readFileSync(this._file,'utf-8').split('\n')
     this._people = []
-    for (let i = 1; i < readFile.length; i++) {
-      let data = readFile[i].split(',')
-      this._people.push(new Person(data[0], data[1], data[2], data[3], data[4]))
+    for(let i = 1; i < data.length; i++) {
+      let item = data[i].split(',')
+      this._people.push( new Person(item[0],item[1],item[2],item[3],item[4]  ))
     }
     return this._people
+
   }
 
-  addPerson(id,first_name,last_name,email,phone) {
-    this._people.push(new Person(this._people +1, first_name, last_name, email, phone))
+  add(first_name,last_name,email,phone,created_at) {
+    this._people.push( new Person(this._people.length+1, first_name, last_name, email, phone) )
   }
 
-  save(){
-    for (let i = 0; i < this._people.length; i++) {
-      this._people[i] = `${this._people[i].id}, ${this._people[i].first_name},${this._people[i].last_name},${this._people[i].email},${this._people[i].phone},${this._people[i].created_at}`
+  save() {
+    for(let i = 0; i < this._people.length; i++) {
+      this._people[i] = `${this._people[i].id},${this._people[i].firstName},${this._people[i].lastName},${this._people[i].email},${this._people[i].phone},${this._people[i].createdAt}`
     }
-    this._people.unshift()
-    this._people = this._people.join('\n')
+    this._people.unshift(`id,first_name,last_name,email,phone,created_at`)
+    console.log(`There are ${this._people.length} people in the file '${parser._file}'.`)
 
-    fs.writeFileSync(this._file, this._people, 'utf-8', function(err){
-      err ? console.log(err):console.log('Data has been saved !!');;
-    })
+    this._people = this._people.join('\n')
+    fs.writeFile(this._file, this._people , 'utf-8', function (err) {
+    if (err) return console.log(err);
+      console.log('Data already saved!');
+    });
   }
+
+  last() {
+      console.log(this._people[this._people.length - 1]);
+    }
 }
 
-let parser = new PersonParser('people.csv')
-    parser.people
+let parser = new Parser('people.csv')
+parser.people
 
 console.log(parser.people);
-console.log(`There are ${parser._people.size} people in the file '${parser._file}'.`)
 
-parser.addPerson('Samuel', 'Sinaga', 'samuelphsinaga@gmail.com', 08992969500)
+parser.add('Sam','Gateng','samuel@ganteng.com',08992969500)
+
 parser.save()
